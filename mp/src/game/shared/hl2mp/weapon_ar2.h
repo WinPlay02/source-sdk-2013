@@ -66,6 +66,17 @@ public:
 	
 	const WeaponProficiencyInfo_t *GetProficiencyValues();
 
+#ifndef CLIENT_DLL
+	DECLARE_ACTTABLE();
+#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+	int CapabilitiesGet(void) { return bits_CAP_WEAPON_RANGE_ATTACK1; }
+	void Operator_HandleAnimEvent(animevent_t *pEvent, CBaseCombatCharacter *pOperator);
+	void Operator_ForceNPCFire(CBaseCombatCharacter *pOperator, bool bSecondary);
+	void FireNPCSecondaryAttack(CBaseCombatCharacter *pOperator, bool bUseWeaponAngles);
+	void FireNPCPrimaryAttack(CBaseCombatCharacter *pOperator, bool bUseWeaponAngles);
+#endif //SecobMod__Enable_Fixed_Multiplayer_AI
+#endif
+
 private:
 	CWeaponAR2( const CWeaponAR2 & );
 
@@ -75,16 +86,7 @@ protected:
 	bool					m_bShotDelayed;
 	int						m_nVentPose;
 	
-#ifndef CLIENT_DLL
-	DECLARE_ACTTABLE();
-	#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
-	int CapabilitiesGet( void ) { return bits_CAP_WEAPON_RANGE_ATTACK1; }
-	void Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator );
-	void Operator_ForceNPCFire( CBaseCombatCharacter *pOperator, bool bSecondary );
-	void FireNPCSecondaryAttack( CBaseCombatCharacter *pOperator, bool bUseWeaponAngles );
-	void FireNPCPrimaryAttack( CBaseCombatCharacter *pOperator, bool bUseWeaponAngles );
-	#endif //SecobMod__Enable_Fixed_Multiplayer_AI
-#endif
+
 };
 
 

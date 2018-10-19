@@ -36,6 +36,7 @@
 #include "ai_interactions.h"
 #include "weapon_flaregun.h"
 #include "env_debughistory.h"
+#ifdef HL2_EPISODIC
 
 //SecobMod__MiscFixes: Here we include the hl2mp gamerules so that calls to darkness mode work. Also many instances of HL2GameRules are now set to HL2MPRules in this file.
 #include "hl2mp_gamerules.h"
@@ -3604,3 +3605,4 @@ AI_BEGIN_CUSTOM_NPC( npc_alyx, CNPC_Alyx )
 		);
 
 AI_END_CUSTOM_NPC()
+#endif

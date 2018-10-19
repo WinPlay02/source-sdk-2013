@@ -8,7 +8,6 @@
 //			FIXME: need a better comment block
 //
 //=============================================================================//
-
 #include "cbase.h"
 #include "npcevent.h"
 #include "ai_basenpc.h"
@@ -18,7 +17,7 @@
 #include "ai_senses.h"
 #include "soundent.h"
 #include "props.h"
-
+#ifndef HL2_EPISODIC
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -270,3 +269,4 @@ AI_BEGIN_CUSTOM_NPC( npc_alyx, CNPC_Alyx )
 
 AI_END_CUSTOM_NPC()
 
+#endif

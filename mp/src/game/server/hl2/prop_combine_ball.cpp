@@ -747,12 +747,13 @@ void CPropCombineBall::WhizSoundThink()
 			}
 		}
 	}
-
+	/*
 	#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
 		CBasePlayer *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());  //Slightly different location due to OLD/NEW sdk code differences. Unsure if needed.
 	#else
 	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 	#endif //SecobMod__Enable_Fixed_Multiplayer_AI	
+	*/
 }
 
 //-----------------------------------------------------------------------------

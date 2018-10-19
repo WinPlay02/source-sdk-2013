@@ -120,10 +120,10 @@ extern ConVar hl2_walkspeed;
 
 #ifndef CLIENT_DLL
 
-void PhysCannonBeginUpgrade( CBaseAnimating *pAnim )
+/*void PhysCannonBeginUpgrade( CBaseAnimating *pAnim )
 {
 
-}
+}*/
 
 #ifndef SecobMod__ALLOW_SUPER_GRAVITY_GUN
 bool PlayerHasMegaPhysCannon( void )

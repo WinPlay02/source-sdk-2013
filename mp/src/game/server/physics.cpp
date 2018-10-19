@@ -32,7 +32,7 @@
 #include "tier0/vprof.h"
 #include "engine/IStaticPropMgr.h"
 #include "physics_prop_ragdoll.h"
-#if HL2_EPISODIC
+#ifdef HL2_EPISODIC
 #include "particle_parse.h"
 #endif
 #include "vphysics/object_hash.h"
@@ -2662,7 +2662,7 @@ void PhysCollisionDust( gamevcollisionevent_t *pEvent, surfacedata_t *phit )
 
 		break;
 
-#if HL2_EPISODIC 
+#ifdef HL2_EPISODIC 
 		// this is probably redundant because BaseEntity::VHandleCollision should have already dispatched us elsewhere
 	case CHAR_TEX_WARPSHIELD:
 		PhysCollisionWarpEffect(pEvent,phit);

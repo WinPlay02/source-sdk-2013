@@ -32,7 +32,10 @@ enum HL2MPPlayerState
 
 #if defined( CLIENT_DLL )
 #define CHL2MP_Player C_HL2MP_Player
+
 #endif
+
+class CHL2MP_Player;
 
 class CPlayerAnimState
 {

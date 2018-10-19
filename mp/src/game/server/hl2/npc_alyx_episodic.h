@@ -9,6 +9,7 @@
 #include "ai_behavior_holster.h"
 #include "ai_behavior_functank.h"
 #include "soundenvelope.h"
+#ifdef HL2_EPISODIC
 
 extern ConVar npc_alyx_readiness;
 
@@ -287,3 +288,4 @@ private:
 	DECLARE_DATADESC();
 	DEFINE_CUSTOM_AI;
 };
+#endif

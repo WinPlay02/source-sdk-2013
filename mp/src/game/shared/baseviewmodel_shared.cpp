@@ -27,6 +27,9 @@ extern ConVar in_forceuser;
 #include "iclientmode.h"
 #endif
 
+#include "weapon_hl2mpbase.h"
+//#include "../client/c_hl2mp_player.h"
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -70,7 +73,16 @@ extern ConVar in_forceuser;
 	      }
 	   }
 	}
+
+	class C_HL2MP_Player;
 	 
+	inline C_HL2MP_Player *ToHL2MPPlayer(CBaseEntity *pEntity)
+	{
+		if (!pEntity || !pEntity->IsPlayer())
+			return NULL;
+
+		return (C_HL2MP_Player*) pEntity;
+	}
 	 
 	// last time ironsighted mode was toggled
 	float gIronsightedTime(0.0f);

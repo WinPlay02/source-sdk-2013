@@ -7,6 +7,7 @@
 // $NoKeywords: $
 //=============================================================================//
 
+#ifndef HL2_EPISODIC
 #include "ai_baseactor.h"
 #include "npc_playercompanion.h"
 #include "ai_behavior_holster.h"
@@ -36,3 +37,4 @@ public:
 	DECLARE_DATADESC();
 	DEFINE_CUSTOM_AI;
 };
+#endif

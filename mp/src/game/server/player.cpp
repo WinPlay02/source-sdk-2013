@@ -6238,7 +6238,12 @@ static void CreateJeep( CBasePlayer *pPlayer )
 	// Cheat to create a jeep in front of the player
 	Vector vecForward;
 	AngleVectors( pPlayer->EyeAngles(), &vecForward );
-	CBaseEntity *pJeep = (CBaseEntity *)CreateEntityByName( "prop_vehicle_jeep" );
+	//CBaseEntity *pJeep = (CBaseEntity *)CreateEntityByName( "prop_vehicle_jeep" );
+#ifdef HL2_EPISODIC
+	CBaseEntity *pJeep = (CBaseEntity *)CreateEntityByName("prop_vehicle_hl2buggy");
+#else
+	CBaseEntity *pJeep = (CBaseEntity *)CreateEntityByName("prop_vehicle_jeep");
+#endif
 	if ( pJeep )
 	{
 		Vector vecOrigin = pPlayer->GetAbsOrigin() + vecForward * 256 + Vector(0,0,64);
@@ -6256,7 +6261,7 @@ static void CreateJeep( CBasePlayer *pPlayer )
 }
 
 
-void CC_CH_CreateJeep( void )
+/*void CC_CH_CreateJeep( void )
 {
 	CBasePlayer *pPlayer = UTIL_GetCommandClient();
 	if ( !pPlayer )
@@ -6296,7 +6301,7 @@ static void CreateAirboat( CBasePlayer *pPlayer )
 		pJeep->Teleport( &vecOrigin, &vecAngles, NULL );
 	}
 }
-
+*/
 
 void CC_CH_CreateJeep( void )
 {
@@ -7899,9 +7904,14 @@ void CStripWeapons::StripWeapons(inputdata_t &data, bool stripSuit)
 		}
 	}
 #else
-pPlayer = UTIL_GetLocalPlayer();
+	pPlayer = UTIL_GetLocalPlayer();
 #endif //SecobMod__Enable_Fixed_Multiplayer_AI
 	}
+	if (pPlayer)
+	{
+		pPlayer->RemoveAllItems(stripSuit);
+	}
+}
 
 
 class CRevertSaved : public CPointEntity
@@ -8007,22 +8017,49 @@ void CRevertSaved::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 			g_ServerGameDLL.m_fAutoSaveDangerousTime = 0.0f;
 			g_ServerGameDLL.m_fAutoSaveDangerousMinHealthToCommit = 0.0f;
 			}
-#endif //SecobMod__Enable_Fixed_Multiplayer_AI
-}
-#else
-CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+	}
+	#else
+	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 
-	if ( pPlayer )
+		if ( pPlayer )
+		{
+			//Adrian: Setting this flag so we can't move or save a game.
+			pPlayer->pl.deadflag = true;
+			pPlayer->AddFlag( (FL_NOTARGET|FL_FROZEN) );
+
+			// clear any pending autosavedangerous
+			g_ServerGameDLL.m_fAutoSaveDangerousTime = 0.0f;
+			g_ServerGameDLL.m_fAutoSaveDangerousMinHealthToCommit = 0.0f;
+		}
+	#endif //SecobMod__Enable_Fixed_Multiplayer_AI
+	}
+
+void CRevertSaved::InputReload( inputdata_t &inputdata )
+{
+	UTIL_ScreenFadeAll( m_clrRender, Duration(), HoldTime(), FFADE_OUT );
+
+#ifdef HL1_DLL
+	SetNextThink( gpGlobals->curtime + MessageTime() );
+	SetThink( &CRevertSaved::MessageThink );
+#else
+	SetNextThink( gpGlobals->curtime + LoadTime() );
+	SetThink( &CRevertSaved::LoadThink );
+#endif
+
+	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+
+	if (pPlayer)
 	{
 		//Adrian: Setting this flag so we can't move or save a game.
 		pPlayer->pl.deadflag = true;
-		pPlayer->AddFlag( (FL_NOTARGET|FL_FROZEN) );
+		pPlayer->AddFlag((FL_NOTARGET | FL_FROZEN));
 
 		// clear any pending autosavedangerous
 		g_ServerGameDLL.m_fAutoSaveDangerousTime = 0.0f;
 		g_ServerGameDLL.m_fAutoSaveDangerousMinHealthToCommit = 0.0f;
+
+
 	}
-#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 }
 
 #ifdef HL1_DLL

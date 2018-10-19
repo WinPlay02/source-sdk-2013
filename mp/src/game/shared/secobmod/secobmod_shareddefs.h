@@ -30,9 +30,9 @@
 /**************************/
 /* Multiplayer Additions. */
 /**************************/
-#define SecobMod__FRIENDLY_FIRE_ENABLED //Enable friendly fire.
+//#define SecobMod__FRIENDLY_FIRE_ENABLED //Enable friendly fire.
 #define SecobMod__ENABLE_DYNAMIC_PLAYER_RESPAWN_CODE //Respawn where you were killed or for preference near a living player as opposed to back at the start of a map.
-#define SecobMod__USE_PLAYERCLASSES //Enable player classes.
+//#define SecobMod__USE_PLAYERCLASSES //Enable player classes.
 #define SecobMod__MULTIPLAYER_VIEWCONTROL_CAMERAS //Fixes the View Control Cameras so that all clients are affected by View Control cameras.
 //#define SecobMod__FORCE_TEAMPLAY_AS_ALWAYS_ON //Forces teamplay to always be enabled.
 #define SecobMod__ENABLE_FAKE_PASSENGER_SEATS //Allows a hacky passenger seat to be added to valves vehicles (jeep and jalopy).
@@ -48,8 +48,8 @@
 /************************/
 /* Player Enhancements. */
 /************************/
-#define SecobMod__IRONSIGHT_ENABLED //Allow basic version of ironsight. Use the keypad minus key to toggle the ironsight_toggle console command.
-#define SecobMod__ENABLE_NIGHTVISION_FOR_HEAVY_CLASS //Give the heavy class nightvision (use the 'N' key to toggle on/off)
+//#define SecobMod__IRONSIGHT_ENABLED //Allow basic version of ironsight. Use the keypad minus key to toggle the ironsight_toggle console command.
+//#define SecobMod__ENABLE_NIGHTVISION_FOR_HEAVY_CLASS //Give the heavy class nightvision (use the 'N' key to toggle on/off)
 #define SecobMod__PLAYERS_CAN_PICKUP_OBJECTS //Players can pickup objects with their hands.
 #define SecobMod__CAN_SPRINT_WITHOUT_SUIT //Players can sprint without the HEV suit.
 #define SecobMod__HAS_AMMO_REGARDLESS_OF_SUIT //Players have an ammo count.

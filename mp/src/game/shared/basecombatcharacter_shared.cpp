@@ -90,11 +90,6 @@ bool CBaseCombatCharacter::Weapon_CanSwitchTo( CBaseCombatWeapon *pWeapon )
 	
 	if ( m_hActiveWeapon )
 	{
-		//Secobmod what would this even fix?
-		#ifdef seco-test
-		if ( !m_hActiveWeapon->CanHolster() )
-			return false;
-		#else
 		if ( !m_hActiveWeapon->CanHolster() && !pWeapon->ForceWeaponSwitch() )
 			return false;
 
@@ -112,7 +107,6 @@ bool CBaseCombatCharacter::Weapon_CanSwitchTo( CBaseCombatWeapon *pWeapon )
 				}
 			}
 		}
-		#endif
 	}
 
 	return true;
