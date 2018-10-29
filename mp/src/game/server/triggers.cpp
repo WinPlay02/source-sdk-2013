@@ -39,6 +39,12 @@
 #include "hl2_player.h"
 #endif
 
+#ifdef SecobMod__SAVERESTORE
+#include "hl2mp_player.h"
+#endif //SecobMod__SAVERESTORE
+
+#include "util.h"
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -51,6 +57,11 @@ CUtlVector< CHandle<CTriggerMultiple> >	g_hWeaponFireTriggers;
 
 extern CServerGameDLL	g_ServerGameDLL;
 extern bool				g_fGameOver;
+
+#ifdef SecobMod__SAVERESTORE
+extern bool Transitioned;
+#endif //SecobMod__SAVERESTORE
+
 ConVar showtriggers( "showtriggers", "0", FCVAR_CHEAT, "Shows trigger brushes" );
 
 bool IsTriggerClass( CBaseEntity *pEntity );
@@ -1587,6 +1598,11 @@ void CChangeLevel::WarnAboutActiveLead( void )
 	}
 }
 
+#ifdef SecobMod__MULTIPLAYER_LEVEL_TRANSITIONS
+extern ConVar mp_transition_players_percent;
+extern ConVar sv_transitions;
+#endif SecobMod__MULTIPLAYER_LEVEL_TRANSITIONS
+
 void CChangeLevel::ChangeLevelNow( CBaseEntity *pActivator )
 {
 	CBaseEntity	*pLandmark;
@@ -1594,17 +1610,67 @@ void CChangeLevel::ChangeLevelNow( CBaseEntity *pActivator )
 
 	Assert(!FStrEq(m_szMapName, ""));
 
+#ifndef SecobMod__MULTIPLAYER_LEVEL_TRANSITIONS
 	// Don't work in deathmatch
 	if ( g_pGameRules->IsDeathmatch() )
 		return;
+#endif //SecobMod__MULTIPLAYER_LEVEL_TRANSITIONS
 
 	// Some people are firing these multiple times in a frame, disable
-	if ( m_bTouched )
+	//if ( m_bTouched )
+	//	return;
+
+	//m_bTouched = true;
+
+#ifdef SecobMod__MULTIPLAYER_LEVEL_TRANSITIONS
+	CBasePlayer *pPlayer = (pActivator && pActivator->IsPlayer()) ? ToBasePlayer(pActivator) : UTIL_GetLocalPlayer();
+	if (!pPlayer)
+		return;
+
+	pPlayer->m_bTransition = true;
+
+	if (mp_transition_players_percent.GetInt() > 0)
+	{
+		int totalPlayers = 0;
+		int transitionPlayers = 0;
+		for (int i = 1; i <= gpGlobals->maxClients; i++)
+		{
+			CBasePlayer* pPlayer = UTIL_PlayerByIndex(i);
+			if (pPlayer && pPlayer->IsAlive())
+			{
+				totalPlayers++;
+				if (pPlayer->m_bTransition)
+					transitionPlayers++;
+			}
+		}
+		if (((int)(transitionPlayers / totalPlayers * 100)) < mp_transition_players_percent.GetInt())
+		{
+			Msg("Transitions: Not enough players to trigger level change\n");
+			return;
+		}
+	}
+#ifdef SecobMod__SAVERESTORE
+	CHL2MP_Player *p2Player = (CHL2MP_Player *)UTIL_GetLocalPlayer();
+	p2Player->SaveTransitionFile();
+	Transitioned = true;
+#endif //SecobMod__SAVERESTORE
+	Q_strncpy(st_szNextMap, m_szMapName, sizeof(st_szNextMap));
+
+	//SecobMod__Information  Change to the next map.
+	engine->ChangeLevel(st_szNextMap, NULL);
+	//SecobMod__Information  As far as we're concerned this is where we stop the code because we just transitioned.
+	return;
+#endif //SecobMod__MULTIPLAYER_LEVEL_TRANSITIONS
+	// Some people are firing these multiple times in a frame, disable
+	if (m_bTouched)
 		return;
 
 	m_bTouched = true;
 
+	//SecobMod__Information  Code can't compile without this ifndef.
+#ifndef SecobMod__MULTIPLAYER_LEVEL_TRANSITIONS
 	CBaseEntity *pPlayer = (pActivator && pActivator->IsPlayer()) ? pActivator : UTIL_GetLocalPlayer();
+#endif //SecobMod__MULTIPLAYER_LEVEL_TRANSITIONS
 
 	int transitionState = InTransitionVolume(pPlayer, m_szLandmarkName);
 	if ( transitionState == TRANSITION_VOLUME_SCREENED_OUT )
@@ -2613,7 +2679,11 @@ void CTriggerSave::Touch( CBaseEntity *pOther )
 		if ( g_ServerGameDLL.m_fAutoSaveDangerousTime != 0.0f && g_ServerGameDLL.m_fAutoSaveDangerousTime >= gpGlobals->curtime )
 		{
 			// A previous dangerous auto save was waiting to become safe
-			CBasePlayer *pPlayer = UTIL_PlayerByIndex( 1 );
+#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+			CBasePlayer *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
+#else
+			CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
+#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 
 			if ( pPlayer->GetDeathTime() == 0.0f || pPlayer->GetDeathTime() > gpGlobals->curtime )
 			{
@@ -2633,7 +2703,11 @@ void CTriggerSave::Touch( CBaseEntity *pOther )
 	if ( m_fDangerousTimer != 0.0f )
 	{
 		// There's a dangerous timer. Save if we have enough hitpoints.
-		CBasePlayer *pPlayer = UTIL_PlayerByIndex( 1 );
+#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+		CBasePlayer *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
+#else
+		CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
+#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 
 		if (pPlayer && pPlayer->GetHealth() >= m_minHitPoints)
 		{
@@ -3038,7 +3112,12 @@ void CTriggerCamera::Enable( void )
 
 	if ( !m_hPlayer || !m_hPlayer->IsPlayer() )
 	{
+#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+		m_hPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
+		Msg("m_hPlayer should now be the nearest player.");
+#else
 		m_hPlayer = UTIL_GetLocalPlayer();
+#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 	}
 
 	if ( !m_hPlayer )
